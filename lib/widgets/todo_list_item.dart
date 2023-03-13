@@ -6,10 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:task_list_app/models/task.dart';
 
 class TodoListItem extends StatefulWidget {
-  TodoListItem({super.key, required this.task, required this.onDelete});
+  TodoListItem(
+      {super.key,
+      required this.task,
+      required this.onDelete,
+      required this.ontaskCompleted});
   final Task task;
   final Function(Task) onDelete;
-
+  final Function(bool) ontaskCompleted;
   @override
   State<TodoListItem> createState() => _TodoListItemState();
 }
@@ -97,6 +101,7 @@ class _TodoListItemState extends State<TodoListItem> {
                 value: isChecked,
                 onChanged: (value) {
                   isChecked = !isChecked;
+                  widget.ontaskCompleted(isChecked);
                   setState(() {});
                 },
               ),

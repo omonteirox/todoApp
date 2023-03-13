@@ -17,8 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int? deletedIndex;
   Task? deletedTask;
   String? errorText;
-  @override
   List<Task> tasks = [];
+
   void initState() {
     super.initState();
     taskRepository.getTodoList().then((value) {
@@ -27,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
   }
+
+  int taskSize = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       return TodoListItem(
                         task: tasks[index],
                         onDelete: onDelete,
+                        ontaskCompleted: _onTaskCompleted,
                       );
                     },
                   ),
@@ -91,8 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   children: [
                     Expanded(
-                        child: Text(
-                            'Você possui ${tasks.length} tarefas pendentes')),
+                        child: Text('Você possui $taskSize tarefas pendentes')),
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: showDeletedTasksConfirmationDialog,
@@ -117,6 +119,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _onTaskCompleted(bool isSelected) {
+    if (isSelected) {
+      taskSize--;
+      setState(() {});
+    } else {
+      taskSize++;
+      setState(() {});
+    }
+  }
+
   void saveTask() {
     String text = taskController.text;
     DateTime date = DateTime.now();
@@ -131,6 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() {
       tasks.add(newTask);
+      taskSize++;
       errorText = null;
     });
   }
@@ -146,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
           TextButton(
             onPressed: () {
               tasks.clear();
+              taskSize = 0;
               taskRepository.saveTodoList(tasks);
               setState(() {});
               Navigator.pop(context);
@@ -173,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
     deletedTask = task;
     deletedIndex = tasks.indexOf(task);
     tasks.remove(task);
+    taskSize--;
     setState(() {});
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -183,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
           label: 'Desfazer',
           onPressed: () {
             tasks.insert(deletedIndex!, deletedTask!);
+            taskSize++;
             setState(() {});
           },
         ),
