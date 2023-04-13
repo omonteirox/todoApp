@@ -1,5 +1,3 @@
-# task_list_app
+# Task List APP
 
-Projeto Flutter com a intenção de botar em prática os conhecimentos de estados, TextFields e etc..
-
-## Enjoy!
+ - Testar os conhecimentos de gerenciamento de estado
